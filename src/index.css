@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Helvetica';
+    src: url('/Fonts/Helvetica-Black.eot');
+    src: url('/Fonts/Helvetica-Black.eot?#iefix') format('embedded-opentype'),
+        url('/Fonts/Helvetica-Black.woff2') format('woff2'),
+        url('/Fonts/Helvetica-Black.woff') format('woff'),
+        url('/Fonts/Helvetica-Black.ttf') format('truetype'),
+        url('/Fonts/Helvetica-Black.svg#Helvetica-Black') format('svg');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+@font-face {
+    font-family: 'Proxima Nova';
+    src: url('/Fonts/proximanova_regular.ttf') format('ttf'),
+        url('/Fonts/proximanova_regular.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Proxima Nova';
+    src: url('/Fonts/proximanova_bold.otf') format('otf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+body {
+    font-family: Proxima Nova, sans-serif;
+    letter-spacing: 0;
+    line-height: 1.5;
+    --tw-text-opacity: 1;
+    color: rgb(66 66 67 / var(--tw-text-opacity, 1));
+}
+
+
+
+
+.global-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.03) !important;
+    /* z-index: 20; */
+    transform: translate(0);
+}
+
+
+
+/* container media querys */
+@media (min-width: 640px) {
+    .container {
+        max-width: 640px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container {
+        max-width: 768px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container {
+        max-width: 1024px;
+    }
+}
+
+@media (min-width: 1192px) {
+    .container {
+        max-width: 1192px;
+    }
+}
+
+/* 
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1400px;
+    }
+} */
+
+/* @media (min-width: 1920px) {
+    .container {
+        max-width: 1400px;
+    }
+} */
+
+
+.container {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.ScrollAreaRoot {
+    width: 100%;
+    height: 70vh;
+    /* Responsive height */
+    max-height: 700px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px var(--black-a4);
+    background-color: white;
+    --scrollbar-size: 10px;
+}
+
+
+.ScrollAreaViewport {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+}
+
+.ScrollAreaScrollbar {
+    display: flex;
+    /* ensures no selection */
+    user-select: none;
+    /* disable browser handling of all panning and zooming gestures on touch devices */
+    touch-action: none;
+    padding: 2px;
+    background: var(--black-a3);
+    transition: background 160ms ease-out;
+}
+
+.ScrollAreaScrollbar:hover {
+    background: var(--black-a5);
+}
+
+.ScrollAreaScrollbar[data-orientation="vertical"] {
+    width: var(--scrollbar-size);
+}
+
+.ScrollAreaScrollbar[data-orientation="horizontal"] {
+    flex-direction: column;
+    height: var(--scrollbar-size);
+}
+
+.ScrollAreaThumb {
+    flex: 1;
+    background: var(--mauve-10);
+    border-radius: var(--scrollbar-size);
+    position: relative;
+}
+
+/* increase target size for touch devices https://www.w3.org/WAI/WCAG21/Understanding/target-size.html */
+.ScrollAreaThumb::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+.ScrollAreaCorner {
+    background: var(--black-a5);
+}
+
+.common-result-link {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+}
+
+
+#predictive-search-drawer {
+    transform: translateX(100%);
+    animation: slideIn 300ms ease-out forwards;
+}
+
+#predictive-search-drawer.close {
+    animation: slideOut 300ms ease-out forwards;
+}
+
+.openSideBar {}
+
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
