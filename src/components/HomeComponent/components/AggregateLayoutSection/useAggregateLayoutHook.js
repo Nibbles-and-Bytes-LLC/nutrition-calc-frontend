@@ -2,7 +2,7 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 
 
-const useAggregateLayoutHook = ({ layout, decryptFunction }) => {
+const useAggregateLayoutHook = ({ layout, selectedLayoutObj, isDecryptionComplete, decryptedData }) => {
     const fields = {
         productName: "",
         servingSizeWeight: "",
@@ -96,15 +96,14 @@ const useAggregateLayoutHook = ({ layout, decryptFunction }) => {
 
     useEffect(() => {
         if (layout === "aggregate") {
-            decryptFunction((data, dataLayout) => {
-                if (data && dataLayout === layout) {
-                    setNuteritionFact(data?.nuteritionFacts)
-                    setProducts(data?.products);
-                    setProductCount(data?.productCount)
-                }
-            }, layout)
+            if (isDecryptionComplete && decryptedData && decryptedData.layout?.value === layout) {
+                // Restore data from decrypted data
+                setNuteritionFact(decryptedData.data?.nuteritionFacts || nuteritionFacts);
+                setProducts(decryptedData.data?.products || products);
+                setProductCount(decryptedData.data?.productCount || productCount);
+            }
         }
-    }, [layout]);
+    }, [layout, isDecryptionComplete, decryptedData]);
 
     return ({
         layout,
