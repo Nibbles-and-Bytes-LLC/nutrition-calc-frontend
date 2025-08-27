@@ -2,7 +2,7 @@ import _ from "lodash";
 import { useEffect, useState } from "react";
 
 
-const useDualLayoutHook = ({ layout, decryptFunction }) => {
+const useDualLayoutHook = ({ layout, selectedLayoutObj, isDecryptionComplete, decryptedData }) => {
     const fields = {
         rounding: "default",
         calories: "",
@@ -42,22 +42,20 @@ const useDualLayoutHook = ({ layout, decryptFunction }) => {
 
     useEffect(() => {
         if (["dual-forms", "dual-column"]?.includes(layout)) {
-            decryptFunction((data, dataLayout) => {
-                console.log(data, ':::::::::::::::::::::::::::::')
-                if (data && dataLayout === layout) {
-                    setServingValues(data?.servingValues)
-                    setPerServingData(data?.perServingData);
-                    setPerContainerData(data?.perContainerData);
-                } else {
-                    const perServing = _.cloneDeep({ ...fields, title: "per Serving" });
-                    const perCotaienr = _.cloneDeep({ ...fields, title: "per Container" });
-                    setPerServingData({ ...perServing, title: (layout === "dual-forms") ? "per 1/4 cup dry mix" : "per Serving" });
-                    setPerContainerData({ ...perCotaienr, title: (layout === "dual-forms") ? "Per baked portion" : "per Container" });
-                }
-            }, layout)
+            if (isDecryptionComplete && decryptedData && decryptedData.layout?.value === layout) {
+                // Restore data from decrypted data
+                setServingValues(decryptedData.data?.servingValues || servingValues);
+                setPerServingData(decryptedData.data?.perServingData || perServingData);
+                setPerContainerData(decryptedData.data?.perContainerData || perContainerData);
+            } else {
+                // Set default values
+                const perServing = _.cloneDeep({ ...fields, title: "per Serving" });
+                const perCotaienr = _.cloneDeep({ ...fields, title: "per Container" });
+                setPerServingData({ ...perServing, title: (layout === "dual-forms") ? "per 1/4 cup dry mix" : "per Serving" });
+                setPerContainerData({ ...perCotaienr, title: (layout === "dual-forms") ? "Per baked portion" : "per Container" });
+            }
         }
-
-    }, [layout]);
+    }, [layout, isDecryptionComplete, decryptedData]);
 
 
 

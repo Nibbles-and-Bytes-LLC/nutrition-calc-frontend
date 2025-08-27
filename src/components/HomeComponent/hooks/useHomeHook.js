@@ -85,6 +85,9 @@ const useHomeHook = () => {
     const [selectedLayoutObj, setSelectedLayoutObj] = useState(null);
     const [isEmailSending, setIsEmailSending] = useState(false);
     const [successMessage, setSuccessMessage] = useState({ status: '', message: '' });
+    const [isDecryptionComplete, setIsDecryptionComplete] = useState(false);
+    const [decryptedData, setDecryptedData] = useState(null);
+
 
     const divRef = useRef(null);
     async function decryptFunction(setNuterition, currentLayout) {
@@ -99,20 +102,37 @@ const useHomeHook = () => {
                     const decrypted = await decryptObjectFromUrl(encrypted, password);
                     if (decrypted) {
                         console.log(decrypted, 'decrypted')
+                        
+                        // Store the decrypted data for layout hooks to access
+                        setDecryptedData(decrypted);
+                        
+                        // Set the layout object first
                         setSelectedLayoutObj(decrypted?.layout);
-                        setNutritionData({ ..._.omit(decrypted?.data, ["perServingData", "perContainerData", "servingValues"]), labelFormat: currentLayout || decrypted?.layout.value })
+                        
+                        // Set the main nutrition data, excluding layout-specific fields
+                        const mainData = _.omit(decrypted?.data, ["perServingData", "perContainerData", "servingValues", "products", "nuteritionFacts", "productCount"]);
+                        setNutritionData({ 
+                            ...mainData, 
+                            labelFormat: currentLayout || decrypted?.layout.value 
+                        });
 
+                        // Call the layout-specific setter if provided
                         if (setNuterition) {
                             setNuterition(decrypted?.data, decrypted?.layout.value);
                         }
+                        
+                        // Mark decryption as complete
+                        setIsDecryptionComplete(true);
                     }
                 }
             } else {
                 if (setNuterition) setNuterition(null);
+                setIsDecryptionComplete(true);
             }
         } catch (error) {
             console.error("Error decrypting data:", error);
             setSelectedLayoutObj(labelFormats[0]); // Fallback to default layout if decryption fails
+            setIsDecryptionComplete(true);
         }
     }
 
@@ -405,6 +425,8 @@ const useHomeHook = () => {
         showEmailCapture, setShowEmailCapture,
         showExportModal, setShowExportModal,
         nutritionData, setNutritionData,
+        isDecryptionComplete,
+        decryptedData,
 
 
         handleSave,

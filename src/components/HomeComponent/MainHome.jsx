@@ -24,6 +24,8 @@ const MainHome = () => {
         nutritionData,
         isEmailSending,
         successMessage, setSuccessMessage,
+        isDecryptionComplete,
+        decryptedData,
 
         handleSave,
         sendEmailWithLink,
@@ -34,8 +36,8 @@ const MainHome = () => {
     } = useHomeHook();
     console.log(nutritionData, 'nutritionData')
 
-    const dualLayoutHookData = useDualLayoutHook({ layout: nutritionData?.labelFormat, selectedLayoutObj, decryptFunction });
-    const aggregateLayoutHookData = useAggregateLayoutHook({ layout: nutritionData?.labelFormat, selectedLayoutObj, decryptFunction });
+    const dualLayoutHookData = useDualLayoutHook({ layout: nutritionData?.labelFormat, selectedLayoutObj, decryptFunction, isDecryptionComplete, decryptedData });
+    const aggregateLayoutHookData = useAggregateLayoutHook({ layout: nutritionData?.labelFormat, selectedLayoutObj, decryptFunction, isDecryptionComplete, decryptedData });
 
     return (
         <>
