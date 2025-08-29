@@ -5,7 +5,7 @@ import domtoimage from "dom-to-image";
 import _ from "lodash";
 import API from "../../../helpers/API";
 import { useSearchParams } from "react-router";
-import { decryptObjectFromUrl } from "./cryptoCode";
+import { decryptObjectFromUrl, encryptObjectForUrl } from "./cryptoCode";
 
 // const [form, setForm] = useState({});
 // const svgRef = useRef();
@@ -93,24 +93,45 @@ const useHomeHook = () => {
     async function decryptFunction(setNuterition, currentLayout) {
         try {
             const PENDING_PROCESS_DATA = searchParam.get('pp');
+            console.log('decryptFunction called with PENDING_PROCESS_DATA:', PENDING_PROCESS_DATA);
+            
             if (PENDING_PROCESS_DATA) {
                 const [encrypted, password] = PENDING_PROCESS_DATA.split('^');
-                console.log(password, 'PENDING_PROCESS_DATA', PENDING_PROCESS_DATA.split('^'));
+                console.log('Encrypted part:', encrypted);
+                console.log('Password part:', password);
+                console.log('Split result:', PENDING_PROCESS_DATA.split('^'));
 
                 if (encrypted && password) {
                     // Decrypt the data
                     const decrypted = await decryptObjectFromUrl(encrypted, password);
                     if (decrypted) {
-                        console.log(decrypted, 'decrypted')
+                        console.log('Decrypted data:', decrypted);
+                        console.log('Decrypted data structure:', {
+                            hasData: !!decrypted.data,
+                            hasLayout: !!decrypted.layout,
+                            dataKeys: decrypted.data ? Object.keys(decrypted.data) : 'no data',
+                            layoutKeys: decrypted.layout ? Object.keys(decrypted.layout) : 'no layout'
+                        });
                         
                         // Store the decrypted data for layout hooks to access
+                        console.log('Setting decryptedData for layout hooks:', decrypted);
                         setDecryptedData(decrypted);
                         
                         // Set the layout object first
+                        console.log('Setting selectedLayoutObj to:', decrypted?.layout);
                         setSelectedLayoutObj(decrypted?.layout);
                         
                         // Set the main nutrition data, excluding layout-specific fields
                         const mainData = _.omit(decrypted?.data, ["perServingData", "perContainerData", "servingValues", "products", "nuteritionFacts", "productCount"]);
+                        console.log('Setting nutritionData to:', mainData);
+                        console.log('Layout-specific data that will be handled by layout hooks:', {
+                            perServingData: decrypted?.data?.perServingData,
+                            perContainerData: decrypted?.data?.perContainerData,
+                            servingValues: decrypted?.data?.servingValues,
+                            products: decrypted?.data?.products,
+                            nuteritionFacts: decrypted?.data?.nuteritionFacts,
+                            productCount: decrypted?.data?.productCount
+                        });
                         setNutritionData({ 
                             ...mainData, 
                             labelFormat: currentLayout || decrypted?.layout.value 
@@ -118,11 +139,15 @@ const useHomeHook = () => {
 
                         // Call the layout-specific setter if provided
                         if (setNuterition) {
+                            console.log('Calling setNuterition with:', decrypted?.data, decrypted?.layout.value);
                             setNuterition(decrypted?.data, decrypted?.layout.value);
+                        } else {
+                            console.log('setNuterition not provided, skipping layout-specific data restoration');
                         }
                         
                         // Mark decryption as complete
                         setIsDecryptionComplete(true);
+                        console.log('Decryption completed successfully');
                     }
                 }
             } else {
@@ -139,6 +164,14 @@ const useHomeHook = () => {
     useEffect(() => {
         decryptFunction()
     }, []);
+
+    // Set default layout if none is selected
+    useEffect(() => {
+        if (!selectedLayoutObj && labelFormats.length > 0) {
+            console.log('Setting default layout:', labelFormats[0]);
+            setSelectedLayoutObj(labelFormats[0]);
+        }
+    }, [labelFormats]);
 
 
     const handleSave = () => {
