@@ -97,9 +97,9 @@ const useHomeHook = () => {
             
             if (PENDING_PROCESS_DATA) {
                 const [encrypted, password] = PENDING_PROCESS_DATA.split('^');
-                console.log('Encrypted part:', encrypted);
-                console.log('Password part:', password);
-                console.log('Split result:', PENDING_PROCESS_DATA.split('^'));
+                //console.log('Encrypted part:', encrypted);
+                //console.log('Password part:', password);
+                //console.log('Split result:', PENDING_PROCESS_DATA.split('^'));
 
                 if (encrypted && password) {
                     // Decrypt the data
@@ -114,11 +114,11 @@ const useHomeHook = () => {
                         });
                         
                         // Store the decrypted data for layout hooks to access
-                        console.log('Setting decryptedData for layout hooks:', decrypted);
+                        //console.log('Setting decryptedData for layout hooks:', decrypted);
                         setDecryptedData(decrypted);
                         
                         // Set the layout object first
-                        console.log('Setting selectedLayoutObj to:', decrypted?.layout);
+                        //console.log('Setting selectedLayoutObj to:', decrypted?.layout);
                         setSelectedLayoutObj(decrypted?.layout);
                         
                         // Set the main nutrition data, excluding layout-specific fields
